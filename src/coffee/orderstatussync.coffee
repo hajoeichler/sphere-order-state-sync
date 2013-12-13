@@ -10,23 +10,11 @@ class OrderStatusSync
     @restFrom = new Rest config: @options.config.from
     @sync = new OrderSync config: @options.config.to
 
-#  elasticio: (msg, cfg, cb, snapshot) ->
-#    if msg.attachments
-#      for attachment of msg.attachments
-#        continue if not attachment.match /xml$/i
-#        content = msg.attachments[attachment].content
-#        continue if not content
-#        xmlString = new Buffer(content, 'base64').toString()
-#        @run xmlString, cb
-#    else if msg.body
-#      # TODO: As we get only one entry here, we should query for the existing one and not
-#      # get the whole inventory
-#      @initMatcher().then () =>
-#        @createOrUpdate([@createEntry(msg.body.SKU, msg.body.QUANTITY)], cb)
-#      .fail (msg) =>
-#        @returnResult false, msg, cb
-#    else
-#      @returnResult false, 'No data found in elastic.io msg.', cb
+  elasticio: (msg, cfg, cb, snapshot) ->
+    if msg.body
+      # TODO
+    else
+      @returnResult false, 'No data found in elastic.io msg!', cb
 
   getOrders: (rest) ->
     deferred = Q.defer()
