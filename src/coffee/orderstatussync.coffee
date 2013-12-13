@@ -18,7 +18,7 @@ class OrderStatusSync
 
   getOrders: (rest) ->
     deferred = Q.defer()
-    rest.GET "orders?limit=0", (error, response, body) ->
+    rest.GET "/orders?limit=0", (error, response, body) ->
       if error
         deferred.reject "Error on fetching orders: " + error
       else if response.statusCode != 200
@@ -30,9 +30,8 @@ class OrderStatusSync
 
   run: (callback) ->
     throw new Error 'Callback must be a function!' unless _.isFunction callback
-
-    initMatcher().then (fromIndex2toIndex) =>
-      process(fromIndex2toIndex).then (msg) =>
+    @initMatcher().then (fromIndex2toIndex) =>
+      @process(fromIndex2toIndex).then (msg) =>
         @returnResult true, msg, callback
       .fail (msg) =>
         @returnResult false, msg, callback
@@ -47,11 +46,12 @@ class OrderStatusSync
 
   initMatcher: () ->
     deferred = Q.defer()
-    Q.all([@getOrders(@restFrom), @getOrders(@restTo)]).then (ordersFrom, ordersTo) =>
-      @orderFrom = orderFrom
-      @ordersTo = orderTo
+    Q.all([@getOrders(@restFrom), @getOrders(@restTo)]).then ([ordersFrom, ordersTo]) =>
+      @ordersFrom = ordersFrom
+      @ordersTo = ordersTo
       fromIndex2toIndex = {}
-      for oTo,i in ordersTo
+      for oTo,i in @ordersTo
+        continue if oTo.exportedInfo
         for expoInfo,j in oTo.exportedInfo
           if not expoInfo.externalId
             fromIndex2toIndex[i] = j
