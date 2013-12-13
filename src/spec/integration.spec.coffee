@@ -8,7 +8,11 @@ jasmine.getEnv().defaultTimeoutInterval = 3000
 
 describe '#run', ->
   beforeEach ->
-    @sync = new OrderStatusSync Config
+    opts =
+      config:
+        from: Config.config
+        to: Config.config
+    @sync = new OrderStatusSync opts
 
   it 'Nothing to do', (done) ->
     @sync.run (msg) ->
