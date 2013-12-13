@@ -43,7 +43,7 @@ describe '#process', ->
     @orderStatusSync.ordersFrom = [{ id: 'from-1', orderState: 'Open' }]
     @orderStatusSync.ordersTo = [{ id: 'to-1', orderState: 'Open' }]
     @orderStatusSync.process({ 0: 0 }).then (msg) ->
-      expect(msg[0]).toBe 'Order update not necessary.'
+      expect(msg[0]).toBe 'Order status update not necessary.'
       done()
 
   it 'should update order', (done) ->
@@ -53,7 +53,7 @@ describe '#process', ->
     @orderStatusSync.ordersFrom = [{ id: 'from-1', orderState: 'Complete' }]
     @orderStatusSync.ordersTo = [{ id: 'to-1', orderState: 'Open' }]
     @orderStatusSync.process({ 0: 0 }).then (msg) =>
-      expect(msg[0]).toBe 'Order updated.'
+      expect(msg[0]).toBe 'Order status updated.'
       expectedAction =
         actions: [
           action: 'changeOrderState'

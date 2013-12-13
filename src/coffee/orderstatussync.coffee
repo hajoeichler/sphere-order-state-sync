@@ -81,9 +81,9 @@ class OrderStatusSync
         deferred.reject 'Error on updating order: ' + error
       else
         if response.statusCode is 200
-          deferred.resolve 'Order updated.'
+          deferred.resolve 'Order status updated.'
         else if response.statusCode is 304
-          deferred.resolve 'Order update not necessary.'
+          deferred.resolve 'Order status update not necessary.'
         else
           deferred.reject 'Problem on updating existing stock (status: #{response.statusCode}): ' + body
     deferred.promise
