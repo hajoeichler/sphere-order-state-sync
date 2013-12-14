@@ -6,13 +6,12 @@ Q = require 'q'
 class OrderStatusSync
   constructor: (@options) ->
     throw new Error 'No configuration in options!' if not @options or not @options.config
-    @restTo = new Rest config: @options.config.to
-    @restFrom = new Rest config: @options.config.from
-    @sync = new OrderSync config: @options.config.to
+    @sync = new OrderSync config: @options.config
 
   elasticio: (msg, cfg, cb, snapshot) ->
     if msg.body
-      # TODO
+      ordersFrom = msg.body.results
+      run(ordersFrom, cb)
     else
       @returnResult false, 'No data found in elastic.io msg!', cb
 
@@ -28,9 +27,9 @@ class OrderStatusSync
         deferred.resolve orders
     deferred.promise
 
-  run: (callback) ->
+  run: (ordersFrom, callback) ->
     throw new Error 'Callback must be a function!' unless _.isFunction callback
-    @initMatcher().then (fromIndex2toIndex) =>
+    @initMatcher(ordersFrom).then (fromIndex2toIndex) =>
       @process(fromIndex2toIndex).then (msg) =>
         @returnResult true, msg, callback
       .fail (msg) =>
@@ -44,10 +43,10 @@ class OrderStatusSync
       msg: msg
     callback d
 
-  initMatcher: () ->
+  initMatcher: (ordersFrom) ->
+    @ordersFrom = ordersFrom
     deferred = Q.defer()
-    Q.all([@getOrders(@restFrom), @getOrders(@restTo)]).then ([ordersFrom, ordersTo]) =>
-      @ordersFrom = ordersFrom
+    @getOrders(@sync._rest).then (ordersTo) =>
       @ordersTo = ordersTo
       fromIndex2toIndex = {}
       for oTo,i in @ordersTo

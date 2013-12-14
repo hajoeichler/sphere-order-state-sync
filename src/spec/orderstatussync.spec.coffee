@@ -8,14 +8,9 @@ describe 'OrderStatusSync', ->
 describe '#run', ->
   beforeEach ->
     c =
-      from:
-        project_key: 'x'
-        client_id: 'y'
-        client_secret: 'z'
-      to:
-        project_key: '1'
-        client_id: '2'
-        client_secret: '3'
+      project_key: 'x'
+      client_id: 'y'
+      client_secret: 'z'
     @orderStatusSync = new OrderStatusSync { config: c }
 
   it 'should throw error if callback is passed', ->
@@ -24,14 +19,9 @@ describe '#run', ->
 describe '#process', ->
   beforeEach ->
     c =
-      from:
-        project_key: 'x'
-        client_id: 'y'
-        client_secret: 'z'
-      to:
-        project_key: '1'
-        client_id: '2'
-        client_secret: '3'
+      project_key: '1'
+      client_id: '2'
+      client_secret: '3'
     @orderStatusSync = new OrderStatusSync { config: c }
 
   it 'nothing to do', (done) ->
