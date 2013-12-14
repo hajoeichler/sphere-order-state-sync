@@ -1,6 +1,7 @@
 _ = require('underscore')._
 Rest = require('sphere-node-connect').Rest
 OrderSync = require('sphere-node-sync').OrderSync
+ProgressBar = require 'progress'
 Q = require 'q'
 
 class OrderStatusSync
@@ -30,6 +31,8 @@ class OrderStatusSync
   run: (ordersFrom, callback) ->
     throw new Error 'Callback must be a function!' unless _.isFunction callback
     @initMatcher(ordersFrom).then (fromIndex2toIndex) =>
+      if @options.showProgress
+        @bar = new ProgressBar 'Updating order status [:bar] :percent done', { width: 50, total: _.size(fromIndex2toIndex) }
       @process(fromIndex2toIndex).then (msg) =>
         @returnResult true, msg, callback
       .fail (msg) =>
@@ -38,6 +41,8 @@ class OrderStatusSync
       @returnResult false, msg, callback
 
   returnResult: (positiveFeedback, msg, callback) ->
+    if @options.showProgress
+      @bar.terminate()
     d =
       status: positiveFeedback
       msg: msg
@@ -75,7 +80,9 @@ class OrderStatusSync
 
   update: (orderFrom, orderTo) ->
     deferred = Q.defer()
-    @sync.buildActions(orderFrom, orderTo).update (error, response, body) ->
+    @sync.buildActions(orderFrom, orderTo).update (error, response, body) =>
+      if @options.showProgress
+        @bar.tick()
       if error
         deferred.reject 'Error on updating order: ' + error
       else
