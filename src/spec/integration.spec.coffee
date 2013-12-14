@@ -4,7 +4,7 @@ OrderStatusSync = require('../main').OrderStatusSync
 Q = require('q')
 
 # Increase timeout
-jasmine.getEnv().defaultTimeoutInterval = 3000
+jasmine.getEnv().defaultTimeoutInterval = 20000
 
 describe '#run', ->
   beforeEach ->
