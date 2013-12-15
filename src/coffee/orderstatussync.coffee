@@ -2,12 +2,14 @@ _ = require('underscore')._
 Rest = require('sphere-node-connect').Rest
 OrderSync = require('sphere-node-sync').OrderSync
 ProgressBar = require 'progress'
+logentries = require 'node-logentries'
 Q = require 'q'
 
 class OrderStatusSync
   constructor: (@options) ->
     throw new Error 'No configuration in options!' if not @options or not @options.config
     @sync = new OrderSync config: @options.config
+    @log = logentries.logger token: @options.logentries.token if @options.logentries
 
   elasticio: (msg, cfg, cb, snapshot) ->
     if msg.body
@@ -44,8 +46,12 @@ class OrderStatusSync
     if @options.showProgress
       @bar.terminate()
     d =
+      component: 'OrderStatusSync'
       status: positiveFeedback
       msg: msg
+    if @log
+      logLevel = if positiveFeedback then 'info' else 'err'
+      @log.log logLevel, d
     callback d
 
   initMatcher: (ordersFrom) ->
