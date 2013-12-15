@@ -91,7 +91,7 @@ class OrderStatusSync
         else if response.statusCode is 304
           deferred.resolve 'Order status update not necessary.'
         else
-          deferred.reject 'Problem on updating existing stock (status: #{response.statusCode}): ' + body
+          deferred.reject 'Problem on updating order status (status: #{response.statusCode}): ' + body
     deferred.promise
 
 module.exports = OrderStatusSync
