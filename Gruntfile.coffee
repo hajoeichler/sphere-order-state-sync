@@ -63,7 +63,7 @@ module.exports = (grunt)->
     # watching for changes
     watch:
       default:
-        files: ["src/coffee/*.coffee"]
+        files: ["src/coffee/*.coffee", "*.js"]
         tasks: ["build"]
       test:
         files: ["src/**/*.coffee"]
@@ -74,10 +74,10 @@ module.exports = (grunt)->
         stdout: true
         stderr: true
         failOnError: true
+      coverage:
+        command: "istanbul cover jasmine-node --captureExceptions test && cat ./coverage/lcov.info | ./node_modules/coveralls/bin/coveralls.js && rm -rf ./coverage"
       jasmine:
         command: "jasmine-node --captureExceptions test"
-      run:
-        command: "node lib/run.js stock.xml"
 
   # load plugins that provide the tasks defined in the config
   grunt.loadNpmTasks "grunt-coffeelint"
@@ -86,7 +86,9 @@ module.exports = (grunt)->
   grunt.loadNpmTasks "grunt-contrib-coffee"
   grunt.loadNpmTasks "grunt-contrib-watch"
   grunt.loadNpmTasks "grunt-shell"
+  grunt.loadNpmTasks "grunt-bump"
 
   # register tasks
   grunt.registerTask "build", ["clean", "coffeelint", "coffee", "concat"]
   grunt.registerTask "test", ["build", "shell:jasmine"]
+  grunt.registerTask "coverage", ["build", "shell:coverage"]
