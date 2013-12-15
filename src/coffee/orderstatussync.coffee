@@ -12,7 +12,7 @@ class OrderStatusSync
   elasticio: (msg, cfg, cb, snapshot) ->
     if msg.body
       ordersFrom = msg.body.results
-      run(ordersFrom, cb)
+      @run(ordersFrom, cb)
     else
       @returnResult false, 'No data found in elastic.io msg!', cb
 
