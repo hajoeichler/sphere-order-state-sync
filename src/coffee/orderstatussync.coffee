@@ -61,10 +61,12 @@ class OrderStatusSync
       @ordersTo = ordersTo
       fromIndex2toIndex = {}
       for oTo,i in @ordersTo
-        continue if oTo.exportedInfo
-        for expoInfo,j in oTo.exportedInfo
-          if not expoInfo.externalId
-            fromIndex2toIndex[i] = j
+        continue unless oTo.exportInfo
+        for expoInfo in oTo.exportInfo
+          if expoInfo.externalId
+            for oFrom,j in @ordersFrom
+              if oFrom.id is expoInfo.externalId
+                fromIndex2toIndex[j] = i
       deferred.resolve fromIndex2toIndex
     .fail (msg) ->
       deferred.reject msg

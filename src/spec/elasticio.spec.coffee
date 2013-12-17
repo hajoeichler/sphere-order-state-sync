@@ -13,13 +13,13 @@ describe "elasticio integration", ->
       expect(next.msg).toBe 'No data found in elastic.io msg!'
       done()
 
-  it "one order", (done) ->
+  it "one order - no update", (done) ->
     cfg =
       clientId: Config.config.client_id
       clientSecret: Config.config.client_secret
       projectKey: Config.config.project_key
     order =
-      id: '123'
+      id: "id" + new Date().getTime()
       version: 7
     msg =
       body:
