@@ -5,7 +5,7 @@ before_script:
 - npm install -g grunt-cli
 - ./create_config.sh
 after_success:
-- node lib/run.js
+- node lib/run.js --projectKey ${SPHERE_PROJECT_KEY} --clientId ${SPHERE_CLIENT_ID} --clientSecret ${SPHERE_CLIENT_SECRET}
 env:
   global:
   - secure: IO2AuiZ81ea/qG/txwpGEybc7uMwm9VOGHRO3bvngY6EA9CPLATHBEM/wAeLLhbX5sGXSmT047wOd6NUz8lLsLsjbo2FdS6ussRxdA5VA3bm+iINsj+s2d8ATiN8myQX2kEMphP2bI9JkN2UEDV0da/q1Uoc1d3J5Qq0yshm62A=
