@@ -1,6 +1,6 @@
 _ = require('underscore')._
 Config = require '../config'
-OrderStatusSync = require('../main').OrderStatusSync
+OrderStateSync = require('../main').OrderStateSync
 Q = require('q')
 
 # Increase timeout
@@ -8,7 +8,7 @@ jasmine.getEnv().defaultTimeoutInterval = 20000
 
 describe '#run', ->
   beforeEach (done) ->
-    @sync = new OrderStatusSync Config
+    @sync = new OrderStateSync Config
     @channelId = 'TODO'
 
     ensureChannel = (rest, channelKey, type) ->
@@ -88,5 +88,5 @@ describe '#run', ->
         @sync.run [oFrom], (msg) ->
           expect(msg.status).toBe true
           expect(msg.msg.length).toBe 1
-          expect(msg.msg[0]).toBe 'Order status updated.'
+          expect(msg.msg[0]).toBe 'Order state updated.'
           done()

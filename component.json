@@ -1,6 +1,6 @@
 {
     "title": "sphere-order-state-sync",
-    "description": "Syncronizes the order status between two SPHERE.IO projects.",
+    "description": "Syncronizes the order states between two SPHERE.IO projects.",
     "url" : "http://www.commercetools.com",
     "credentials": {
         "fields": {
@@ -27,7 +27,7 @@
     "actions": {
         "services": {
             "main": "elasticio.js",
-            "title": "Order Status Sync",
+            "title": "Order State Sync",
         }
     }
 }

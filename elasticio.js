@@ -1,4 +1,4 @@
-OrderStatusSync = require('./main').OrderStatusSync
+OrderStateSync = require('./main').OrderStateSync
 
 exports.process = function(msg, cfg, cb, snapshot) {
   config = {
@@ -6,7 +6,7 @@ exports.process = function(msg, cfg, cb, snapshot) {
     client_secret: cfg.clientSecret,
     project_key: cfg.projectKey
   };
-  var oss = new OrderStatusSync({
+  var oss = new OrderStateSync({
     config: config
   });
   oss.elasticio(msg, cfg, cb, snapshot);

@@ -5,7 +5,7 @@ ProgressBar = require 'progress'
 logentries = require 'node-logentries'
 Q = require 'q'
 
-class OrderStatusSync
+class OrderStateSync
   constructor: (@options) ->
     throw new Error 'No configuration in options!' if not @options or not @options.config
     @sync = new OrderSync config: @options.config
@@ -34,7 +34,7 @@ class OrderStatusSync
     throw new Error 'Callback must be a function!' unless _.isFunction callback
     @initMatcher(ordersFrom).then (fromIndex2toIndex) =>
       if @options.showProgress
-        @bar = new ProgressBar 'Updating order status [:bar] :percent done', { width: 50, total: _.size(fromIndex2toIndex) }
+        @bar = new ProgressBar 'Updating order states [:bar] :percent done', { width: 50, total: _.size(fromIndex2toIndex) }
       @process(fromIndex2toIndex).then (msg) =>
         @returnResult true, msg, callback
       .fail (msg) =>
@@ -46,7 +46,7 @@ class OrderStatusSync
     if @options.showProgress
       @bar.terminate()
     d =
-      component: 'OrderStatusSync'
+      component: this.constructor.name
       status: positiveFeedback
       msg: msg
     if @log
@@ -95,11 +95,11 @@ class OrderStatusSync
         deferred.reject 'Error on updating order: ' + error
       else
         if response.statusCode is 200
-          deferred.resolve 'Order status updated.'
+          deferred.resolve 'Order state updated.'
         else if response.statusCode is 304
-          deferred.resolve 'Order status update not necessary.'
+          deferred.resolve 'Order state update not necessary.'
         else
-          deferred.reject 'Problem on updating order status (status: #{response.statusCode}): ' + body
+          deferred.reject 'Problem on updating order state (status: #{response.statusCode}): ' + body
     deferred.promise
 
-module.exports = OrderStatusSync
+module.exports = OrderStateSync

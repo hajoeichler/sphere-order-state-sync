@@ -1,1 +1,1 @@
-exports.OrderStatusSync = require('./lib/orderstatussync')
+exports.OrderStateSync = require('./lib/orderstatesync')
