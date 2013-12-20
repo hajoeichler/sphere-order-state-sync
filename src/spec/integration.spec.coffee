@@ -9,11 +9,10 @@ jasmine.getEnv().defaultTimeoutInterval = 20000
 describe '#run', ->
   beforeEach (done) ->
     @sync = new OrderStateSync Config
-    @channelId = 'TODO'
 
     ensureChannel = (rest, channelKey, type) ->
       deferred = Q.defer()
-      rest.GET "/channels?query=" + encodeURIComponent("key=\"#{channelKey}\""), (error, response, body) ->
+      rest.GET "/channels?where=" + encodeURIComponent("key=\"#{channelKey}\""), (error, response, body) ->
         if error
           deferred.reject "Error: " + error
           return deferred.promise
@@ -37,6 +36,10 @@ describe '#run', ->
       deferred.promise
     ensureChannel(@sync.sync._rest, 'integrationTest').then (channelId) =>
       @channelId = channelId
+      done()
+    .fail (msg) ->
+      console.log msg
+      expect(false).toBe true
       done()
 
   it 'Nothing to do', (done) ->
