@@ -49,47 +49,68 @@ describe '#run', ->
       done()
 
   it 'update order', (done) ->
-    oFrom =
-      id: "ID" + new Date().getTime()
-      orderState: 'Complete'
-      lineItems: [ {
-        sku: 'mySKU'
+    unique = new Date().getTime()
+    pt =
+      name: "PT-#{unique}"
+      description: 'bla'
+    @sync.sync._rest.POST '/product-types', JSON.stringify(pt), (error, response, body) =>
+      expect(response.statusCode).toBe 201
+      pt = JSON.parse(body)
+      p =
+        productType:
+          typeId: 'product-type'
+          id: pt.id
         name:
-          de: 'foo'
-        taxRate:
-          name: 'myTax'
-          amount: 0.10
-          includedInPrice: false
-          country: 'DE'
-        quantity: 1
-        price:
-          value:
-            centAmount: 999
+          en: "P-#{unique}"
+        slug:
+          en: "p-#{unique}"
+        masterVariant:
+          sku: "sku-#{unique}"
+      @sync.sync._rest.POST '/products', JSON.stringify(p), (error, response, body) =>
+        expect(response.statusCode).toBe 201
+        oFrom =
+          id: "oFrom-#{unique}"
+          orderState: 'Complete'
+          lineItems: [ {
+            sku: "sku-#{unique}"
+            name:
+              de: 'foo'
+            taxRate:
+              name: 'myTax'
+              amount: 0.10
+              includedInPrice: false
+              country: 'DE'
+            quantity: 1
+            price:
+              value:
+                centAmount: 999
+                currencyCode: 'EUR'
+          } ]
+          totalPrice:
             currencyCode: 'EUR'
-      } ]
-      totalPrice:
-        currencyCode: 'EUR'
-        centAmount: 999
-
-    oTo = {}
-    _.extend(oTo, oFrom)
-    oTo.orderState = 'Open'
-      
-    @sync.sync._rest.POST '/orders/import', JSON.stringify(oTo), (error, response, body) =>
-      order = JSON.parse(body)
-      data =
-        version: order.version
-        actions: [
-          action: 'updateExportInfo'
-          channel:
-            typeId: 'channel'
-            id: @channelId
-          exportedAt: '2000-01-01T01:01:01.000Z'
-          externalId: oFrom.id
-        ]
-      @sync.sync._rest.POST "/orders/#{order.id}", JSON.stringify(data), (error, response, body) =>
-        @sync.run [oFrom], (msg) ->
-          expect(msg.status).toBe true
-          expect(msg.msg.length).toBe 1
-          expect(msg.msg[0]).toBe 'Order state updated.'
-          done()
+            centAmount: 999
+    
+        oTo = {}
+        _.extend(oTo, oFrom)
+        oTo.orderState = 'Open'
+          
+        @sync.sync._rest.POST '/orders/import', JSON.stringify(oTo), (error, response, body) =>
+          expect(response.statusCode).toBe 201
+          order = JSON.parse(body)
+          data =
+            version: order.version
+            actions: [
+              action: 'updateExportInfo'
+              channel:
+                typeId: 'channel'
+                id: @channelId
+              exportedAt: '2000-01-01T01:01:01.000Z'
+              externalId: oFrom.id
+            ]
+          @sync.sync._rest.POST "/orders/#{order.id}", JSON.stringify(data), (error, response, body) =>
+            expect(response.statusCode).toBe 200
+            @sync.run [oFrom], (msg) ->
+              expect(msg.status).toBe true
+              expect(msg.msg.length).toBe 1
+              expect(msg.msg[0]).toBe 'Order state updated.'
+              done()
