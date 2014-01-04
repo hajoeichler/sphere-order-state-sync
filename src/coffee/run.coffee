@@ -21,3 +21,4 @@ sync.getOrders(rest).then (orders) ->
     console.log msg
 .fail (msg) ->
   console.log msg
+  process.exit -1
