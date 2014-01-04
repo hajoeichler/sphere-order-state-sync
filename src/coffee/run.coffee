@@ -19,6 +19,7 @@ rest = new Rest options
 sync.getOrders(rest).then (orders) ->
   sync.run orders, (msg) ->
     console.log msg
+    process.exit 0 # TODO - this shouldn't be necessary - but currently the program hangs at the end
 .fail (msg) ->
   console.log msg
   process.exit -1

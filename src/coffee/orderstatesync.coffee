@@ -6,8 +6,8 @@ logentries = require 'node-logentries'
 Q = require 'q'
 
 class OrderStateSync
-  constructor: (@options) ->
-    throw new Error 'No configuration in options!' if not @options or not @options.config
+  constructor: (@options = {}) ->
+    throw new Error 'No configuration in options!' if not @options.config
     @sync = new OrderSync config: @options.config
     @log = logentries.logger token: @options.logentries.token if @options.logentries
 
@@ -89,7 +89,7 @@ class OrderStateSync
   update: (orderFrom, orderTo) ->
     deferred = Q.defer()
     @sync.buildActions(orderFrom, orderTo).update (error, response, body) =>
-      if @options.showProgress
+      if @options.showProgress and @bar
         @bar.tick()
       if error
         deferred.reject 'Error on updating order: ' + error
