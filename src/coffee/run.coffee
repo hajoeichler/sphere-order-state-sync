@@ -6,8 +6,6 @@ argv = require('optimist')
 OrderStateSync = require('../main').OrderStateSync
 Rest = require('sphere-node-connect').Rest
 
-Config.showProgress = true
-
 options =
   config:
     project_key: argv.projectKey
