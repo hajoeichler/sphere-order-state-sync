@@ -45,7 +45,7 @@ describe '#run', ->
   it 'Nothing to do', (done) ->
     @sync.run [], (msg) ->
       expect(msg.status).toBe true
-      expect(msg.msg).toBe 'Nothing to do.'
+      expect(msg.message).toBe 'Nothing to do.'
       done()
 
   it 'update order', (done) ->
@@ -111,6 +111,5 @@ describe '#run', ->
             expect(response.statusCode).toBe 200
             @sync.run [oFrom], (msg) ->
               expect(msg.status).toBe true
-              expect(msg.msg.length).toBe 1
-              expect(msg.msg[0]).toBe 'Order state updated.'
+              expect(msg.message).toBe 'Order state updated.'
               done()
