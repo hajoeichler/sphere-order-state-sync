@@ -10,7 +10,7 @@ describe "elasticio integration", ->
     msg = ''
     elasticio.process msg, cfg, (next) ->
       expect(next.status).toBe false
-      expect(next.msg).toBe 'No data found in elastic.io msg!'
+      expect(next.message).toBe 'No data found in elastic.io msg!'
       done()
 
   it "one order - no update", (done) ->
@@ -27,5 +27,5 @@ describe "elasticio integration", ->
 
     elasticio.process msg, cfg, (next) ->
       expect(next.status).toBe true
-      expect(next.msg).toBe 'Nothing to do.'
+      expect(next.message).toBe 'Nothing to do.'
       done()

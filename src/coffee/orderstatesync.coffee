@@ -1,15 +1,13 @@
 _ = require('underscore')._
 Rest = require('sphere-node-connect').Rest
 OrderSync = require('sphere-node-sync').OrderSync
-ProgressBar = require 'progress'
-logentries = require 'node-logentries'
+CommonUpdater = require('sphere-node-sync').CommonUpdater
 Q = require 'q'
 
-class OrderStateSync
-  constructor: (@options = {}) ->
-    throw new Error 'No configuration in options!' if not @options.config
-    @sync = new OrderSync config: @options.config
-    @log = logentries.logger token: @options.logentries.token if @options.logentries
+class OrderStateSync extends CommonUpdater
+  constructor: (options = {}) ->
+    throw new Error 'No configuration in options!' unless options.config
+    @sync = new OrderSync config: options.config
 
   elasticio: (msg, cfg, cb, snapshot) ->
     if msg.body
@@ -23,7 +21,7 @@ class OrderStateSync
     rest.GET "/orders?limit=0", (error, response, body) ->
       if error
         deferred.reject "Error on fetching orders: " + error
-      else if response.statusCode != 200
+      else if response.statusCode isnt 200
         deferred.reject "Problem on fetching orders (status: #{response.statusCode}): " + body
       else
         orders = JSON.parse(body).results
@@ -33,26 +31,13 @@ class OrderStateSync
   run: (ordersFrom, callback) ->
     throw new Error 'Callback must be a function!' unless _.isFunction callback
     @initMatcher(ordersFrom).then (fromIndex2toIndex) =>
-      if @options.showProgress
-        @bar = new ProgressBar 'Updating order states [:bar] :percent done', { width: 50, total: _.size(fromIndex2toIndex) }
+#      @initProgressBar 'Updating order states', _.size(fromIndex2toIndex)
       @process(fromIndex2toIndex).then (msg) =>
         @returnResult true, msg, callback
       .fail (msg) =>
         @returnResult false, msg, callback
     .fail (msg) =>
       @returnResult false, msg, callback
-
-  returnResult: (positiveFeedback, msg, callback) ->
-    if @options.showProgress
-      @bar.terminate()
-    d =
-      component: this.constructor.name
-      status: positiveFeedback
-      msg: msg
-    if @log
-      logLevel = if positiveFeedback then 'info' else 'err'
-      @log.log logLevel, d
-    callback d
 
   initMatcher: (ordersFrom) ->
     @ordersFrom = ordersFrom
@@ -89,8 +74,7 @@ class OrderStateSync
   update: (orderFrom, orderTo) ->
     deferred = Q.defer()
     @sync.buildActions(orderFrom, orderTo).update (error, response, body) =>
-      if @options.showProgress and @bar
-        @bar.tick()
+      @tickProgress()
       if error
         deferred.reject 'Error on updating order: ' + error
       else
