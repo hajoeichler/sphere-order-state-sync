@@ -100,7 +100,7 @@ describe '#run', ->
           data =
             version: order.version
             actions: [
-              action: 'updateExportInfo'
+              action: 'updateSyncInfo'
               channel:
                 typeId: 'channel'
                 id: @channelId

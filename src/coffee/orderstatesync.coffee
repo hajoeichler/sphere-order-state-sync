@@ -46,8 +46,8 @@ class OrderStateSync extends CommonUpdater
       @ordersTo = ordersTo
       fromIndex2toIndex = {}
       for oTo,i in @ordersTo
-        continue unless oTo.exportInfo
-        for expoInfo in oTo.exportInfo
+        continue unless oTo.syncInfo
+        for expoInfo in oTo.syncInfo
           if expoInfo.externalId
             for oFrom,j in @ordersFrom
               if oFrom.id is expoInfo.externalId
