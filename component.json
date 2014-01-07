@@ -27,7 +27,7 @@
     "actions": {
         "services": {
             "main": "elasticio.js",
-            "title": "Order State Sync",
+            "title": "Order State Sync"
         }
     }
 }
