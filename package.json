@@ -1,7 +1,7 @@
 {
   "name": "sphere-order-state-sync",
   "description": "Sync order states between two SPHERE.IO projects.",
-  "version": "0.0.8",
+  "version": "0.0.10",
   "homepage": "https://github.com/hajoeichler/sphere-order-state-sync",
   "keywords": [
     "sphere",
@@ -33,7 +33,7 @@
   },
   "dependencies": {
     "optimist": "0.6.0",
-    "q": "~0.9.7",
+    "q": "~1.0.0",
     "sphere-node-connect": "~0.2.2",
     "sphere-node-sync": "~0.3.4",
     "underscore": "~1.5.2"
